@@ -5,6 +5,7 @@ import { FlatList, Pressable, Text, View } from "react-native";
 import Card from "@/src/components/ui/Card";
 import { accountRepo } from "@/src/database/repositories/accountRepo";
 import { Account } from "@/src/types/finance";
+import { formattedRupiah } from "@/src/utils/currency";
 
 export default function AccountScreen() {
     const [accounts, setAccounts] = useState<Account[]>([]);
@@ -61,7 +62,7 @@ export default function AccountScreen() {
                         }}
                     >
                         <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
-                        <Text>Balance: {item.balance}</Text>
+                        <Text>Balance: {formattedRupiah(item.balance)}</Text>
                     </Pressable>
                 )}
             />

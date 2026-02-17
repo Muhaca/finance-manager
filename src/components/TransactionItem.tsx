@@ -13,7 +13,7 @@ export default function TransactionItem({
 }: TransactionItemProps) {
     const isIncome = type === "income";
 
-    const formatRupiah = (value: number) => {
+    const formattedRupiah = (value: number) => {
         return `Rp ${value.toLocaleString("id-ID")}`;
     };
 
@@ -43,7 +43,7 @@ export default function TransactionItem({
                     className={`font-bold text-base ${isIncome ? "text-green-600" : "text-red-500"
                         }`}
                 >
-                    {isIncome ? "+" : "-"} {formatRupiah(amount)}
+                    {isIncome ? "+" : "-"} {formattedRupiah(amount)}
                 </Text>
 
                 <Text className="text-xs text-gray-400 mt-1 capitalize">

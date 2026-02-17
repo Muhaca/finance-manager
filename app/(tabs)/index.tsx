@@ -4,6 +4,7 @@ import { ScrollView, Text, View } from "react-native";
 
 import TransactionItem from "@/src/components/TransactionItem";
 import { transactionRepo } from "@/src/database/repositories/transactionRepo";
+import { formattedRupiah } from "@/src/utils/currency";
 
 export default function DashboardScreen() {
   const [summary, setSummary] = useState<any>({});
@@ -23,9 +24,6 @@ export default function DashboardScreen() {
     }, [])
   );
 
-  const formatRupiah = (value = 0) =>
-    `Rp ${value.toLocaleString("id-ID")}`;
-
   const balance =
     (summary.total_income || 0) -
     (summary.total_expense || 0);
@@ -39,7 +37,7 @@ export default function DashboardScreen() {
         </Text>
 
         <Text className="text-white text-3xl font-bold mt-1">
-          {formatRupiah(balance)}
+          {formattedRupiah(balance)}
         </Text>
       </View>
 
@@ -51,7 +49,7 @@ export default function DashboardScreen() {
             Income
           </Text>
           <Text className="text-green-600 font-bold text-lg mt-1">
-            {formatRupiah(summary.total_income || 0)}
+            {formattedRupiah(summary.total_income || 0)}
           </Text>
         </View>
 
@@ -61,7 +59,7 @@ export default function DashboardScreen() {
             Expense
           </Text>
           <Text className="text-red-500 font-bold text-lg mt-1">
-            {formatRupiah(summary.total_expense || 0)}
+            {formattedRupiah(summary.total_expense || 0)}
           </Text>
         </View>
       </View>
