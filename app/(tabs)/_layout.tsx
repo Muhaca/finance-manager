@@ -1,27 +1,26 @@
-import {
-  createMaterialTopTabNavigator,
-} from "@react-navigation/material-top-tabs";
+import CustomTabBar from "@/src/components/CustomTabBar";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { withLayoutContext } from "expo-router";
 
 const { Navigator } = createMaterialTopTabNavigator();
 
+// 🔥 Ini magic supaya compatible dengan Expo Router
 export const MaterialTopTabs = withLayoutContext(Navigator);
 
-export default function TabsLayout() {
+export default function TabLayout() {
   return (
     <MaterialTopTabs
       screenOptions={{
-        title: "  ",
         swipeEnabled: true,
-        tabBarStyle: { backgroundColor: "#fff" },
-        tabBarIndicatorStyle: { backgroundColor: "#000" },
+        tabBarStyle: { display: "none" },
+        tabBarIndicatorStyle: { display: "none" },
       }}
-      initialRouteName="index"
+      tabBar={(props) => <CustomTabBar {...props} />}
     >
-      <MaterialTopTabs.Screen name="index" options={{ title: "Home" }} />
-      <MaterialTopTabs.Screen name="transactions" options={{ title: "Transactions" }} />
-      <MaterialTopTabs.Screen name="reports" options={{ title: "Reports" }} />
-      <MaterialTopTabs.Screen name="accounts" options={{ title: "Accounts" }} />
+      <MaterialTopTabs.Screen name="index" />
+      <MaterialTopTabs.Screen name="transactions" />
+      <MaterialTopTabs.Screen name="reports" />
+      <MaterialTopTabs.Screen name="accounts" />
     </MaterialTopTabs>
   );
 }

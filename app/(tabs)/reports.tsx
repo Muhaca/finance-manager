@@ -68,7 +68,7 @@ export default function ReportScreen() {
 
 
     return (
-        <ScrollView className="flex-1 bg-gray-50 p-4">
+        <ScrollView className="flex-1 bg-gray-50 px-4 pt-10 pb-20 ">
             <Text className="text-lg font-bold mb-4">
                 Monthly Report
             </Text>

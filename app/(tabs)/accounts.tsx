@@ -1,11 +1,12 @@
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { FlatList, Pressable, Text, View } from "react-native";
+import { FlatList, Pressable, Text } from "react-native";
 
 import Card from "@/src/components/ui/Card";
 import { accountRepo } from "@/src/database/repositories/accountRepo";
 import { Account } from "@/src/types/finance";
 import { formattedRupiah } from "@/src/utils/currency";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function AccountScreen() {
     const [accounts, setAccounts] = useState<Account[]>([]);
@@ -31,7 +32,7 @@ export default function AccountScreen() {
     };
 
     return (
-        <View style={{ flex: 1, padding: 20 }}>
+        <ScrollView className="flex-1 bg-gray-50 px-4 pt-10 pb-20 ">
             {/* Add Button */}
             <Card
                 onPress={goToAdd}
@@ -66,6 +67,6 @@ export default function AccountScreen() {
                     </Pressable>
                 )}
             />
-        </View>
+        </ScrollView>
     );
 }
