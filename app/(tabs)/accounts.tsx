@@ -1,18 +1,19 @@
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { FlatList, Pressable, Text } from "react-native";
+import { FlatList, Pressable, Text, View } from "react-native";
 
 import Card from "@/src/components/ui/Card";
 import { accountRepo } from "@/src/database/repositories/accountRepo";
 import { Account } from "@/src/types/finance";
 import { formattedRupiah } from "@/src/utils/currency";
-import { ScrollView } from "react-native-gesture-handler";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function AccountScreen() {
     const [accounts, setAccounts] = useState<Account[]>([]);
 
     const loadData = () => {
         const data = accountRepo.getAll();
+
         setAccounts(data);
     };
 
@@ -21,6 +22,11 @@ export default function AccountScreen() {
         useCallback(() => {
             loadData();
         }, [])
+    );
+
+    const totalBalance = accounts.reduce(
+        (acc, item) => acc + item.balance,
+        0
     );
 
     const goToAdd = () => {
@@ -32,19 +38,28 @@ export default function AccountScreen() {
     };
 
     return (
-        <ScrollView className="flex-1 bg-gray-50 px-4 pt-10 pb-20 ">
+        <View className="flex-1 bg-gray-50 px-4 pt-10 pb-20 ">
+
+            {/* Balance Card */}
+            <View className="bg-[#C00B70] rounded-2xl p-6 mb-6 shadow-lg">
+                <View className='flex-row justify-between items-center'>
+                    <Text className="text-white text-sm">
+                        Total Saldo
+                    </Text>
+                    <Ionicons name="wallet-outline" size={18} color="white" />
+                </View>
+                <Text className="text-white text-3xl font-bold mt-1">
+                    {formattedRupiah(totalBalance)}
+                </Text>
+            </View>
+
             {/* Add Button */}
             <Card
                 onPress={goToAdd}
-                style={{
-                    backgroundColor: "#4CAF50",
-                    padding: 12,
-                    borderRadius: 8,
-                    marginBottom: 20,
-                }}
+                className="border-2 border-dashed border-gray-300 p-3 rounded-lg mb-5 h-20 items-center justify-center"
             >
-                <Text style={{ color: "white", textAlign: "center" }}>
-                    + Add Account
+                <Text className="text-gray-600 text-center font-semibold">
+                    + Tambah Akun
                 </Text>
             </Card>
 
@@ -55,18 +70,21 @@ export default function AccountScreen() {
                 renderItem={({ item }) => (
                     <Pressable
                         onPress={() => goToEdit(item.id)}
-                        style={{
-                            padding: 16,
-                            borderWidth: 1,
-                            borderRadius: 12,
-                            marginBottom: 12,
-                        }}
+                        className="p-4 border border-gray-100 rounded-xl mb-3 bg-[#8c174e]"
                     >
-                        <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
-                        <Text>Balance: {formattedRupiah(item.balance)}</Text>
+                        <View className="flex-row justify-between items-center">
+                            <View className="flex-col gap-2">
+                                <Ionicons name="wallet-outline" size={20} color="#fff" />
+                                <Text className="text-white font-bold">{item.name}</Text>
+                            </View>
+                            <View className="flex-row items-center gap-3">
+                                <Text className="text-white font-bold">{formattedRupiah(item.balance)}</Text>
+                                <Ionicons name="pencil-sharp" size={16} color="#fff" />
+                            </View>
+                        </View>
                     </Pressable>
                 )}
             />
-        </ScrollView>
+        </View>
     );
 }

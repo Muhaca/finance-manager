@@ -1,7 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import TransactionItem from "@/src/components/TransactionItem";
 import { accountRepo } from '@/src/database/repositories/accountRepo';
@@ -41,6 +41,27 @@ export default function DashboardScreen() {
 
   return (
     <ScrollView className="flex-1 bg-gray-50 px-4 pt-10 pb-20 ">
+
+      {/* Header User */}
+      <View className="flex-row justify-between items-center mb-6">
+        <View>
+          <Text className="text-gray-500 text-sm">
+            Selamat Datang
+          </Text>
+          <Text className="text-gray-800 text-xl font-bold">
+            My Biniku
+          </Text>
+        </View>
+        <View className="flex-row gap-2">
+          <TouchableOpacity className="bg-white rounded-full p-2">
+            <Ionicons name="notifications-outline" size={20} color="#000" />
+          </TouchableOpacity>
+          <TouchableOpacity className="bg-white rounded-full p-2">
+            <Ionicons name="settings-outline" size={20} color="#000" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
       {/* Balance Card */}
       <View className="bg-[#C00B70] rounded-2xl p-6 mb-6 shadow-lg">
         <View className='flex-row justify-between items-center'>

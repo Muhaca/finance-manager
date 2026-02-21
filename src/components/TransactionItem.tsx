@@ -31,12 +31,11 @@ export default function TransactionItem({
                 <View className={`rounded-full w-10 h-10 items-center justify-center ${isIncome ? "bg-green-100" : "bg-red-100"}`}>
                     <CategoryIcon name={categoryName || "Unknown"} color={isIncome ? "green" : "red"} />
                 </View>
-                <View className="flex-col">
+                <View className="flex-col gap-1">
                     {/* Title */}
                     <Text className="font-semibold text-base text-gray-800">
                         {title}
                     </Text>
-
                     {/* Subtitle */}
                     <Text className="text-xs text-gray-500 mt-1">
                         {categoryName}

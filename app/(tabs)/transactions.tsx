@@ -13,7 +13,6 @@ import TransactionItem from "@/src/components/TransactionItem";
 import { categoryTypeList } from "@/src/constants/cetegoryTypeList";
 import { transactionRepo } from "@/src/database/repositories/transactionRepo";
 import { formattedRupiah } from "@/src/utils/currency";
-import { ScrollView } from "react-native-gesture-handler";
 
 type FilterType = "all" | "income" | "expense";
 
@@ -78,7 +77,7 @@ export default function TransactionsTab() {
     // UI
     // ==============================
     return (
-        <ScrollView className="flex-1 bg-gray-50 px-4 pt-10 pb-20 ">
+        <View className="flex-1 bg-gray-50 px-4 pt-10 pb-20 ">
             {/* ===================== */}
             {/* BALANCE HEADER */}
             {/* ===================== */}
@@ -162,18 +161,17 @@ export default function TransactionsTab() {
             {/* FAB ADD */}
             {/* ===================== */}
             <Pressable
-                onPress={() =>
-                    router.push(
-                        "/transaction/form"
-                    )
-                }
-                className="absolute bottom-6 right-6 bg-indigo-600 w-14 h-14 rounded-full items-center justify-center shadow-lg"
+                onPress={() => router.push("/transaction/form")}
+                className="absolute right-6 bg-[#8c174e] rounded-full items-center justify-center shadow-lg h-16 w-16"
+                style={{
+                    bottom: 120, // 🔥 jangan terlalu dekat tab
+                    zIndex: 100,
+                    elevation: 30, // Android fix
+                }}
             >
-                <Text className="text-white text-2xl font-bold">
-                    +
-                </Text>
+                <Text className="text-white text-2xl font-bold">+</Text>
             </Pressable>
-        </ScrollView>
+        </View>
     );
 }
 

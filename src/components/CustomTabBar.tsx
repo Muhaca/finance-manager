@@ -22,7 +22,7 @@ export default function CustomTabBar({ state, navigation }: any) {
                 const icons: any = {
                     index: isFocused ? "home" : "home-outline",
                     transactions: isFocused ? "receipt" : "receipt-outline",
-                    reports: isFocused ? "bar-chart" : "bar-chart-outline",
+                    reports: isFocused ? "bar-chart" : "pie-chart-outline",
                     accounts: isFocused ? "person" : "person-outline",
                 };
 

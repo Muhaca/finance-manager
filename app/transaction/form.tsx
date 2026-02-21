@@ -1,18 +1,17 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import uuid from 'react-native-uuid';
 
 import { useEffect, useState } from "react";
 import {
     Alert,
-    Button,
     KeyboardAvoidingView,
     Platform,
     Pressable,
     ScrollView,
     Text,
     TextInput,
-    View,
+    View
 } from "react-native";
 
 import { accountRepo } from "@/src/database/repositories/accountRepo";
@@ -20,6 +19,7 @@ import { categoryRepo } from "@/src/database/repositories/categoryRepo";
 import { transactionRepo } from "@/src/database/repositories/transactionRepo";
 
 
+import { CategoryIcon } from "@/src/components/ui/CategoryIcons";
 import { categoryTypeList } from "@/src/constants/cetegoryTypeList";
 import {
     Account,
@@ -27,6 +27,8 @@ import {
     TransactionEntity,
     TransactionType
 } from "@/src/types/finance";
+import { formattedRupiah } from "@/src/utils/currency";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function TransactionFormScreen() {
     const { id } = useLocalSearchParams<{ id?: string }>();
@@ -37,6 +39,7 @@ export default function TransactionFormScreen() {
     const [amount, setAmount] = useState("");
     const [note, setNote] = useState("");
     const [date, setDate] = useState(new Date());
+    const [inputHeight, setInputHeight] = useState(100);
 
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
@@ -106,12 +109,18 @@ export default function TransactionFormScreen() {
             }
             className="flex-1"
         >
+            <Stack.Screen
+                options={{
+                    title: isEdit ? "Edit Transaksi" : "Tambah Transaksi",
+                }}
+            />
             <ScrollView
                 className="flex-1 bg-gray-50"
                 contentContainerStyle={{
-                    padding: 16,
-                    paddingBottom: 120, // space FAB / button
+                    padding: 4,
+                    paddingBottom: 200, // space FAB / button
                 }}
+                keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}
             >
                 {/* FORM CONTENT */}
@@ -124,7 +133,7 @@ export default function TransactionFormScreen() {
                                     key={t.code}
                                     onPress={() => setType(t.code as TransactionType)}
                                     className={`flex-1 p-3 rounded-xl border ${type === t.code
-                                        ? "bg-green-500 border-green-500"
+                                        ? "bg-[#C00B70] border-[#C00B70]"
                                         : "bg-white border-gray-300"
                                         }`}
                                 >
@@ -154,60 +163,107 @@ export default function TransactionFormScreen() {
                         />
                     </View>
 
-                    {/* ACCOUNT */}
-                    <View>
-                        <Text className="font-medium">
-                            Account
-                        </Text>
-
-                        {accounts.map((acc) => (
-                            <Pressable
-                                key={acc.id}
-                                onPress={() => setAccountId(acc.id)}
-                                className={`p-3 rounded-xl border mt-2 ${accountId === acc.id
-                                    ? "bg-blue-500 border-blue-500"
-                                    : "bg-white border-gray-300"
-                                    }`}
-                            >
-                                <Text
-                                    className={
-                                        accountId === acc.id
-                                            ? "text-white"
-                                            : "text-black"
-                                    }
-                                >
-                                    {acc.name} — {acc.balance}
-                                </Text>
-                            </Pressable>
-                        ))}
-                    </View>
-
                     {/* CATEGORY */}
                     <View>
                         <Text className="font-medium">
                             Category
                         </Text>
+                        <View className="flex-row flex-wrap -mx-2 mt-2">
+                            {categories.map((cat) => (
+                                <View key={cat.id} className="w-1/3 px-2 mb-3">
+                                    <Pressable
+                                        key={cat.id}
+                                        onPress={() => setCategoryId(cat.id)}
+                                        className={`p-3 rounded-xl border ${categoryId === cat.id
+                                            ? "bg-[#C00B70] border-[#C00B70]"
+                                            : "bg-white border-gray-300"
+                                            }`}
+                                    >
+                                        <View className="flex items-center gap-2">
+                                            <CategoryIcon
+                                                name={cat.name}
+                                                size={24}
+                                                color={categoryId === cat.id ? "white" : "black"}
+                                            />
+                                            <Text
+                                                className={
+                                                    categoryId === cat.id
+                                                        ? "text-white"
+                                                        : "text-black"
+                                                }
+                                            >
+                                                {cat.name}
+                                            </Text>
+                                        </View>
+                                    </Pressable>
+                                </View>
+                            ))}
+                        </View>
+                    </View>
 
-                        {categories.map((cat) => (
-                            <Pressable
-                                key={cat.id}
-                                onPress={() => setCategoryId(cat.id)}
-                                className={`p-3 rounded-xl border mt-2 ${categoryId === cat.id
-                                    ? "bg-orange-500 border-orange-500"
-                                    : "bg-white border-gray-300"
-                                    }`}
-                            >
-                                <Text
-                                    className={
-                                        categoryId === cat.id
-                                            ? "text-white"
-                                            : "text-black"
-                                    }
-                                >
-                                    {cat.name}
-                                </Text>
-                            </Pressable>
-                        ))}
+                    {/* ACCOUNT */}
+                    <View className="w-full">
+                        <Text className="font-medium">
+                            Akun
+                        </Text>
+                        <View className="flex-row flex-wrap -mx-2 mt-2">
+                            {accounts.map((acc) => (
+                                <View key={acc.id} className="w-1/2 px-2 mb-3">
+                                    <Pressable
+                                        key={acc.id}
+                                        onPress={() => setAccountId(acc.id)}
+                                        className={`p-3 rounded-xl border ${accountId === acc.id
+                                            ? "bg-[#C00B70] border-[#C00B70]"
+                                            : "bg-white border-gray-300"
+                                            }`}
+                                    >
+                                        <View className="flex-row items-center gap-2">
+                                            <Ionicons name="wallet-outline" size={24} color={accountId === acc.id ? "white" : "black"} />
+                                            <View>
+                                                <Text
+                                                    className={
+                                                        accountId === acc.id
+                                                            ? "text-white"
+                                                            : "text-black"
+                                                    }
+                                                >
+                                                    {acc.name}
+                                                </Text>
+                                                <Text
+                                                    className={
+                                                        accountId === acc.id
+                                                            ? "text-white"
+                                                            : "text-black"
+                                                    }
+                                                >
+                                                    {formattedRupiah(acc.balance)}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    </Pressable>
+                                </View>
+                            ))}
+
+                        </View>
+                    </View>
+
+
+                    {/* NOTE */}
+                    <View>
+                        <Text className="font-medium mb-1">
+                            Note
+                        </Text>
+                        <TextInput
+                            multiline
+                            value={note}
+                            onChangeText={setNote}
+                            onContentSizeChange={(e) =>
+                                setInputHeight(e.nativeEvent.contentSize.height)
+                            }
+                            style={{ height: Math.max(100, inputHeight) }}
+                            textAlignVertical="top"
+                            className="border border-gray-300 rounded-xl p-3"
+                        />
                     </View>
 
                     {/* DATE */}
@@ -235,27 +291,16 @@ export default function TransactionFormScreen() {
                         )}
                     </View>
 
-                    {/* NOTE */}
-                    <View>
-                        <Text className="font-medium mb-1">
-                            Note
-                        </Text>
-                        <TextInput
-                            value={note}
-                            onChangeText={setNote}
-                            placeholder="Optional"
-                            className="border border-gray-300 rounded-xl p-3"
-                        />
-                    </View>
-
-                    <Button
-                        title={
-                            isEdit
-                                ? "Update Transaction"
-                                : "Create Transaction"
-                        }
+                    <Pressable
+                        className="mt-4 h-14 bg-[#C00B70] rounded-xl p-3"
                         onPress={handleSave}
-                    />
+                    >
+                        <Text className="text-white text-center font-bold text-lg">
+                            {isEdit
+                                ? "Update Transaksi"
+                                : "Simpan Transaksi"}
+                        </Text>
+                    </Pressable>
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>
