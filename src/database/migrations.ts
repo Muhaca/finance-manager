@@ -1,8 +1,8 @@
 import { db } from "./db";
 
 export const initDB = () => {
-    // Accounts
-    db.execSync(`
+  // Accounts
+  db.execSync(`
     CREATE TABLE IF NOT EXISTS accounts (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
@@ -11,8 +11,8 @@ export const initDB = () => {
     );
   `);
 
-    // Categories
-    db.execSync(`
+  // Categories
+  db.execSync(`
     CREATE TABLE IF NOT EXISTS categories (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
@@ -20,10 +20,10 @@ export const initDB = () => {
     );
   `);
 
-    // Transactions
-    db.execSync(`
+  // Transactions
+  db.execSync(`
     CREATE TABLE IF NOT EXISTS transactions (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id TEXT PRIMARY KEY,
       account_id INTEGER,
       category_id INTEGER,
       amount REAL NOT NULL,

@@ -1,5 +1,6 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { router, useLocalSearchParams } from "expo-router";
+import uuid from 'react-native-uuid';
 
 import { useEffect, useState } from "react";
 import {
@@ -19,10 +20,12 @@ import { categoryRepo } from "@/src/database/repositories/categoryRepo";
 import { transactionRepo } from "@/src/database/repositories/transactionRepo";
 
 
+import { categoryTypeList } from "@/src/constants/cetegoryTypeList";
 import {
     Account,
     Category,
-    TransactionType,
+    TransactionEntity,
+    TransactionType
 } from "@/src/types/finance";
 
 export default function TransactionFormScreen() {
@@ -73,25 +76,21 @@ export default function TransactionFormScreen() {
             return;
         }
 
-        const payload = {
+        const payload: TransactionEntity = {
+            id: id ? id : uuid.v4(),
             account_id: accountId,
             category_id: categoryId,
             amount: Number(amount),
-            type,
-            note,
+            type: type,
+            note: note,
             date: date.toISOString(),
+
         };
 
         if (isEdit) {
-            transactionRepo.update({
-                id: String(id),
-                ...payload,
-            });
+            transactionRepo.update(payload);
         } else {
-            transactionRepo.create({
-                id: String(id),
-                ...payload,
-            });
+            transactionRepo.create(payload);
         }
 
         router.back();
@@ -119,23 +118,23 @@ export default function TransactionFormScreen() {
                 <View className="flex-1 bg-white p-5 gap-4">
                     {/* TYPE */}
                     <View className="flex-row gap-3">
-                        {(["expense", "income"] as TransactionType[])
+                        {categoryTypeList
                             .map((t) => (
                                 <Pressable
-                                    key={t}
-                                    onPress={() => setType(t)}
-                                    className={`flex-1 p-3 rounded-xl border ${type === t
+                                    key={t.code}
+                                    onPress={() => setType(t.code as TransactionType)}
+                                    className={`flex-1 p-3 rounded-xl border ${type === t.code
                                         ? "bg-green-500 border-green-500"
                                         : "bg-white border-gray-300"
                                         }`}
                                 >
                                     <Text
-                                        className={`text-center font-semibold ${type === t
+                                        className={`text-center font-semibold ${type === t.code
                                             ? "text-white"
                                             : "text-black"
                                             }`}
                                     >
-                                        {t.toUpperCase()}
+                                        {t.label}
                                     </Text>
                                 </Pressable>
                             ))}
@@ -144,7 +143,7 @@ export default function TransactionFormScreen() {
                     {/* AMOUNT */}
                     <View>
                         <Text className="mb-1 font-medium">
-                            Amount
+                            Jumlah
                         </Text>
                         <TextInput
                             value={amount}

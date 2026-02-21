@@ -1,5 +1,6 @@
 import { Stack } from "expo-router";
 import { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { initDB } from "@/src/database/migrations";
 import { seedCategories } from "@/src/database/seed";
@@ -12,5 +13,14 @@ export default function RootLayout() {
     seedCategories();
   }, []);
 
-  return <Stack />;
+  return (
+    <GestureHandlerRootView>
+      <Stack>
+        <Stack.Screen
+          name="(tabs)"
+          options={{ headerShown: false }}
+        />
+      </Stack>
+    </GestureHandlerRootView>
+  )
 }

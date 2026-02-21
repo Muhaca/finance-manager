@@ -1,5 +1,7 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { TransactionItemProps } from "../types/finance";
+import { formatDate } from "../utils/formatDate";
+import { CategoryIcon } from "./ui/CategoryIcons";
 
 export default function TransactionItem({
     title,
@@ -25,29 +27,30 @@ export default function TransactionItem({
             activeOpacity={0.7}
         >
             {/* LEFT */}
-            <View className="flex-1">
-                {/* Title */}
-                <Text className="font-semibold text-base text-gray-800">
-                    {title || categoryName}
-                </Text>
+            <View className="flex-row gap-2 flex-1">
+                <View className={`rounded-full w-10 h-10 items-center justify-center ${isIncome ? "bg-green-100" : "bg-red-100"}`}>
+                    <CategoryIcon name={categoryName || "Unknown"} color={isIncome ? "green" : "red"} />
+                </View>
+                <View className="flex-col">
+                    {/* Title */}
+                    <Text className="font-semibold text-base text-gray-800">
+                        {title}
+                    </Text>
 
-                {/* Subtitle */}
-                <Text className="text-xs text-gray-500 mt-1">
-                    {accountName} • {date}
-                </Text>
+                    {/* Subtitle */}
+                    <Text className="text-xs text-gray-500 mt-1">
+                        {categoryName}
+                    </Text>
+                    <Text className="text-xs text-gray-500 mt-1">
+                        {accountName} • {formatDate(date)}
+                    </Text>
+                </View>
             </View>
 
             {/* RIGHT */}
-            <View className="items-end">
-                <Text
-                    className={`font-bold text-base ${isIncome ? "text-green-600" : "text-red-500"
-                        }`}
-                >
+            <View className="items-end ">
+                <Text className={`font-bold text-base ${isIncome ? "text-green-600" : "text-red-500"}`}  >
                     {isIncome ? "+" : "-"} {formattedRupiah(amount)}
-                </Text>
-
-                <Text className="text-xs text-gray-400 mt-1 capitalize">
-                    {type}
                 </Text>
             </View>
         </TouchableOpacity>

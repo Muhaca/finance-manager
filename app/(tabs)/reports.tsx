@@ -141,8 +141,6 @@ export default function ReportScreen() {
                     {topCategory?.category || "-"}
                 </Text>
             </View>
-
-
         </ScrollView>
     );
 }

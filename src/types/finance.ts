@@ -32,7 +32,7 @@ export type CreateCategoryPayload = {
 };
 
 export type UpdateCategoryPayload = {
-    id: number;
+    id: string;
     name?: string;
     type?: CategoryType;
 };
@@ -40,7 +40,7 @@ export type UpdateCategoryPayload = {
 //Transaction
 export type TransactionType = "income" | "expense";
 
-export type Transaction = {
+export type TransactionEntity = {
     id: string;
     account_id: number;
     category_id: number;
@@ -48,39 +48,18 @@ export type Transaction = {
     type: TransactionType;
     note?: string;
     date: string;
-    created_at: string;
-    notes?: string;
+};
 
-    // relation
+export type TransactionWithRelation = TransactionEntity & {
     category_name: string;
     account_name: string;
-};
-
-export type CreateTransactionPayload = {
-    id: string;
-    account_id: number;
-    category_id: number;
-    amount: number;
-    type: TransactionType;
-    note?: string;
-    date: string;
-};
-
-export type UpdateTransactionPayload = {
-    id: string;
-    account_id?: number;
-    category_id?: number;
-    amount?: number;
-    type?: TransactionType;
-    note?: string;
-    date?: string;
 };
 
 export type TransactionItemProps = {
     id: string;
     title: string;
     amount: number;
-    type: 'income' | 'expense';
+    type: TransactionType;
     date: string;
     accountName?: string;
     categoryName?: string;

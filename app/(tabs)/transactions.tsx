@@ -8,14 +8,18 @@ import {
     View,
 } from "react-native";
 
+import EmptyState from "@/src/components/EmtyState";
 import TransactionItem from "@/src/components/TransactionItem";
+import { categoryTypeList } from "@/src/constants/cetegoryTypeList";
 import { transactionRepo } from "@/src/database/repositories/transactionRepo";
+import { formattedRupiah } from "@/src/utils/currency";
 
 type FilterType = "all" | "income" | "expense";
 
 export default function TransactionsTab() {
     const [data, setData] = useState<any[]>([]);
     const [balance, setBalance] = useState(0);
+    const [summary, setSummary] = useState<any>({});
     const [filter, setFilter] =
         useState<FilterType>("all");
 
@@ -25,7 +29,11 @@ export default function TransactionsTab() {
     const loadData = () => {
         const trx = transactionRepo.getAll();
         const bal = transactionRepo.getTotalBalance();
+        const sum = transactionRepo.getSummaryCurrentMonth()
 
+        console.log(sum);
+
+        setSummary(sum || { total_income: 0, total_expense: 0 })
         setData(trx || []);
         setBalance(bal);
     };
@@ -73,13 +81,15 @@ export default function TransactionsTab() {
             {/* ===================== */}
             {/* BALANCE HEADER */}
             {/* ===================== */}
-            <View className="bg-indigo-600 rounded-3xl p-6 mb-6 shadow-lg">
-                <Text className="text-indigo-200 text-sm">
-                    Total Balance
-                </Text>
+            <View className="bg-[#C00B70] rounded-2xl p-6 mb-6 shadow-lg">
+                <View className="flex-row justify-between">
+                    <Text className="text-white text-sm">
+                        {filter === "income" ? "Total Pemasukan" : filter === "expense" ? "Total Pengeluaran" : "Total"}
+                    </Text>
+                </View>
 
                 <Text className="text-white text-3xl font-bold mt-1">
-                    Rp {balance.toLocaleString("id-ID")}
+                    {filter === "income" ? formattedRupiah(summary.total_income) : filter === "expense" ? formattedRupiah(summary.total_expense) : formattedRupiah(balance)}
                 </Text>
             </View>
 
@@ -87,25 +97,25 @@ export default function TransactionsTab() {
             {/* FILTER BAR */}
             {/* ===================== */}
             <View className="flex-row mb-4 gap-2">
-                {["all", "income", "expense"].map(
+                {[{ code: "all", label: "Semua" }, ...categoryTypeList].map(
                     (f) => (
                         <Pressable
-                            key={f}
+                            key={f.code}
                             onPress={() =>
-                                setFilter(f as FilterType)
+                                setFilter(f.code as FilterType)
                             }
-                            className={`px-4 py-2 rounded-full border ${filter === f
-                                ? "bg-indigo-600 border-indigo-600"
+                            className={`px-4 py-2 rounded-full border ${filter === f.code
+                                ? "bg-[#E978AC] border-[#E978AC]"
                                 : "bg-white border-gray-200"
                                 }`}
                         >
                             <Text
-                                className={`text-sm capitalize ${filter === f
+                                className={`text-sm capitalize ${filter === f.code
                                     ? "text-white"
                                     : "text-gray-600"
                                     }`}
                             >
-                                {f}
+                                {f.label}
                             </Text>
                         </Pressable>
                     )
@@ -169,16 +179,4 @@ export default function TransactionsTab() {
 // ==============================
 // EMPTY STATE
 // ==============================
-function EmptyState() {
-    return (
-        <View className="items-center mt-32">
-            <Text className="text-gray-400 text-sm">
-                No transactions yet
-            </Text>
 
-            <Text className="text-gray-300 text-xs mt-1">
-                Tap + to add income or expense
-            </Text>
-        </View>
-    );
-}

@@ -1,16 +1,14 @@
 import {
-    CreateTransactionPayload,
-    Transaction,
-    UpdateTransactionPayload
+  TransactionEntity,
 } from "@/src/types/finance";
 import { getSignedAmount } from "@/src/utils/balance";
 import { db } from "../db";
 import { accountRepo } from "./accountRepo";
 
 export const transactionRepo = {
-    // 📥 Get all
-    getAll(): Transaction[] {
-        return db.getAllSync<Transaction>(`
+  // 📥 Get all
+  getAll(): TransactionEntity[] {
+    return db.getAllSync<TransactionEntity>(`
       SELECT
         t.id,
         t.type,
@@ -25,146 +23,147 @@ export const transactionRepo = {
       LEFT JOIN accounts a
         ON a.id = t.account_id
       ORDER BY t.date DESC
-    `) as Transaction[];
-    },
+    `) as TransactionEntity[];
+  },
 
-    // 📥 Get by id
-    getById(id: string): Transaction | null {
-        const row = db.getFirstSync<Transaction>(
-            `    SELECT
+  // 📥 Get by id
+  getById(id: string): TransactionEntity | null {
+    const row = db.getFirstSync<TransactionEntity>(
+      `    SELECT
       t.id,
       t.type,
       t.amount,
       t.date,
-      t.notes,
+      t.note,
       t.category_id,
       t.account_id
     FROM transactions t
     WHERE t.id = ?
   `, [id]
-        );
-        return row ?? null;
-    },
+    );
+    return row ?? null;
+  },
 
-    create(data: CreateTransactionPayload) {
-        db.runSync(
-            `INSERT INTO transactions (
+  create(data: TransactionEntity) {
+    db.runSync(
+      `INSERT INTO transactions (
       id,
-      type,
-      amount,
-      category_id,
       account_id,
-      date,
-      notes
+      category_id,
+      amount,
+      type,
+      note,
+      date
     ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [
-                data.id,
-                data.type,
-                data.amount,
-                data.category_id,
-                data.account_id,
-                data.date,
-                data.note ?? '',
-            ]
-        );
+      [
+        data.id,
+        data.account_id,
+        data.category_id ?? null,
+        data.amount,
+        data.type,
+        data.note ?? null,
+        data.date
+      ]
+    );
 
-        // 🔥 Balance update
-        const delta = getSignedAmount(
-            data.type,
-            data.amount
-        );
+    // 🔥 Balance update
+    const delta = getSignedAmount(
+      data.type,
+      data.amount
+    );
 
-        accountRepo.updateBalance(
-            data.account_id,
-            delta
-        );
-    },
-    // ✏️ Update transaction (recalculate balance)
-    update(data: UpdateTransactionPayload) {
-        // 1️⃣ ambil data lama (Full)
-        const old = db.getFirstSync<Transaction>(
-            `SELECT * FROM transactions WHERE id = ?`,
-            [data.id]
-        );
+    accountRepo.updateBalance(
+      data.account_id,
+      delta
+    );
+  },
 
-        if (!old) return;
+  // ✏️ Update transaction (recalculate balance)
+  update(data: TransactionEntity) {
+    // 1️⃣ ambil data lama (Full)
+    const old = db.getFirstSync<TransactionEntity>(
+      `SELECT * FROM transactions WHERE id = ?`,
+      [data.id]
+    );
 
-        // 2️⃣ revert balance lama based on OLD data
-        const oldDelta = -getSignedAmount(old.type, old.amount);
+    if (!old) return;
 
-        accountRepo.updateBalance(
-            old.account_id,
-            oldDelta
-        );
+    // 2️⃣ revert balance lama based on OLD data
+    const oldDelta = -getSignedAmount(old.type, old.amount);
 
-        // 3️⃣ Prepare merged data for update
-        const newType = data.type ?? old.type;
-        const newAmount = data.amount ?? old.amount;
-        const newCategoryId = data.category_id ?? old.category_id;
-        const newAccountId = data.account_id ?? old.account_id;
-        const newDate = data.date ?? old.date;
-        const newNote = data.note ?? old.notes ?? '';
+    accountRepo.updateBalance(
+      old.account_id,
+      oldDelta
+    );
 
-        // 3️⃣ update transaksi
-        db.runSync(
-            `UPDATE transactions SET
+    // 3️⃣ Prepare merged data for update
+    const newType = data.type ?? old.type;
+    const newAmount = data.amount ?? old.amount;
+    const newCategoryId = data.category_id ?? old.category_id;
+    const newAccountId = data.account_id ?? old.account_id;
+    const newDate = data.date ?? old.date;
+    const newNote = data.note ?? old.note ?? '';
+
+    // 3️⃣ update transaksi
+    db.runSync(
+      `UPDATE transactions SET
       type = ?,
       amount = ?,
       category_id = ?,
       account_id = ?,
       date = ?,
-      notes = ?
+      note = ?
      WHERE id = ?`,
-            [
-                newType,
-                newAmount,
-                newCategoryId,
-                newAccountId,
-                newDate,
-                newNote,
-                data.id,
-            ]
-        );
+      [
+        newType,
+        newAmount,
+        newCategoryId,
+        newAccountId,
+        newDate,
+        newNote,
+        data.id,
+      ]
+    );
 
-        // 4️⃣ apply balance baru based on NEW data
-        const newDelta = getSignedAmount(newType, newAmount);
+    // 4️⃣ apply balance baru based on NEW data
+    const newDelta = getSignedAmount(newType, newAmount);
 
-        accountRepo.updateBalance(
-            newAccountId,
-            newDelta
-        );
-    },
+    accountRepo.updateBalance(
+      newAccountId,
+      newDelta
+    );
+  },
 
-    // ❌ Delete transaction + revert balance
-    delete(id: string) {
-        // 1️⃣ ambil transaksi dulu
-        const tx = db.getFirstSync<Pick<Transaction, "type" | "amount" | "account_id">>(
-            `SELECT type, amount, account_id
+  // ❌ Delete transaction + revert balance
+  delete(id: string) {
+    // 1️⃣ ambil transaksi dulu
+    const tx = db.getFirstSync<Pick<TransactionEntity, "type" | "amount" | "account_id">>(
+      `SELECT type, amount, account_id
      FROM transactions
      WHERE id = ?`,
-            [id]
-        );
+      [id]
+    );
 
-        if (!tx) return;
+    if (!tx) return;
 
-        // 2️⃣ revert balance
-        const delta =
-            -getSignedAmount(tx.type, tx.amount);
+    // 2️⃣ revert balance
+    const delta =
+      -getSignedAmount(tx.type, tx.amount);
 
-        accountRepo.updateBalance(
-            tx.account_id,
-            delta
-        );
+    accountRepo.updateBalance(
+      tx.account_id,
+      delta
+    );
 
-        // 3️⃣ delete
-        db.runSync(
-            `DELETE FROM transactions WHERE id = ?`,
-            [id]
-        );
-    },
+    // 3️⃣ delete
+    db.runSync(
+      `DELETE FROM transactions WHERE id = ?`,
+      [id]
+    );
+  },
 
-    getTotalBalance(): number {
-        const result = db.getFirstSync<{ total: number }>(`
+  getTotalBalance(): number {
+    const result = db.getFirstSync<{ total: number }>(`
     SELECT SUM(
       CASE 
         WHEN type = 'income' THEN amount
@@ -174,11 +173,11 @@ export const transactionRepo = {
     FROM transactions
   `);
 
-        return result?.total ?? 0;
-    },
+    return result?.total ?? 0;
+  },
 
-    getBalanceByAccount() {
-        return db.getAllSync(`
+  getBalanceByAccount() {
+    return db.getAllSync(`
     SELECT 
       a.id,
       a.name,
@@ -193,10 +192,10 @@ export const transactionRepo = {
       ON t.account_id = a.id
     GROUP BY a.id
   `);
-    },
+  },
 
-    getSummaryCurrentMonth() {
-        return db.getFirstSync<any>(`
+  getSummaryCurrentMonth() {
+    return db.getFirstSync<any>(`
     SELECT
       SUM(
         CASE 
@@ -215,10 +214,10 @@ export const transactionRepo = {
     FROM transactions
     WHERE strftime('%Y-%m', date) = strftime('%Y-%m', 'now')
   `);
-    },
+  },
 
-    getRecent(limit = 5) {
-        return db.getAllSync<any>(`
+  getRecent(limit = 5) {
+    return db.getAllSync<any>(`
     SELECT 
       t.*,
       a.name as account_name,
@@ -229,16 +228,16 @@ export const transactionRepo = {
     ORDER BY t.date DESC
     LIMIT ${limit}
   `);
-    },
+  },
 
-    getTotalAccountBalance() {
-        return db.getFirstSync<any>(`
+  getTotalAccountBalance() {
+    return db.getFirstSync<any>(`
     SELECT SUM(balance) as total FROM accounts
   `);
-    },
+  },
 
-    getMonthlySummary(year: number) {
-        return db.getAllSync<any>(`
+  getMonthlySummary(year: number) {
+    return db.getAllSync<any>(`
     SELECT
       strftime('%m', date) as month,
 
@@ -263,10 +262,10 @@ export const transactionRepo = {
     GROUP BY month
     ORDER BY month
   `);
-    },
+  },
 
-    getExpenseByCategory() {
-        return db.getAllSync<any>(`
+  getExpenseByCategory() {
+    return db.getAllSync<any>(`
     SELECT 
       c.name as category,
       SUM(t.amount) as total
@@ -277,7 +276,7 @@ export const transactionRepo = {
     GROUP BY c.name
     ORDER BY total DESC
   `);
-    },
+  },
 
 
 

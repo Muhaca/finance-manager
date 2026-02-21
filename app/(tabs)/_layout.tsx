@@ -1,46 +1,27 @@
-import { Ionicons } from '@expo/vector-icons';
-import { Tabs } from "expo-router";
+import {
+  createMaterialTopTabNavigator,
+} from "@react-navigation/material-top-tabs";
+import { withLayoutContext } from "expo-router";
 
+const { Navigator } = createMaterialTopTabNavigator();
 
-export default function TabLayout() {
+export const MaterialTopTabs = withLayoutContext(Navigator);
+
+export default function TabsLayout() {
   return (
-    <Tabs>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="receipt-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="transactions"
-        options={{
-          title: 'Transactions',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="receipt-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="reports"
-        options={{
-          title: 'Reports',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="receipt-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="accounts"
-        options={{
-          title: 'Accounts',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="receipt-outline" size={size} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+    <MaterialTopTabs
+      screenOptions={{
+        title: "  ",
+        swipeEnabled: true,
+        tabBarStyle: { backgroundColor: "#fff" },
+        tabBarIndicatorStyle: { backgroundColor: "#000" },
+      }}
+      initialRouteName="index"
+    >
+      <MaterialTopTabs.Screen name="index" options={{ title: "Home" }} />
+      <MaterialTopTabs.Screen name="transactions" options={{ title: "Transactions" }} />
+      <MaterialTopTabs.Screen name="reports" options={{ title: "Reports" }} />
+      <MaterialTopTabs.Screen name="accounts" options={{ title: "Accounts" }} />
+    </MaterialTopTabs>
   );
 }
