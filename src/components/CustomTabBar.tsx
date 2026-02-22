@@ -1,5 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function CustomTabBar({ state, navigation }: any) {
@@ -32,11 +31,12 @@ export default function CustomTabBar({ state, navigation }: any) {
                         onPress={() => navigation.navigate(route.name)}
                         className="flex-1 items-center justify-center"
                     >
-                        <Ionicons
+                        <Text>{route.name}</Text>
+                        {/* <Ionicons
                             name={icons[route.name]}
                             size={24}
                             color={isFocused ? "#000" : "#9CA3AF"}
-                        />
+                        /> */}
                     </TouchableOpacity>
                 );
             })}

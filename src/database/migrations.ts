@@ -14,9 +14,11 @@ export const initDB = () => {
   // Categories
   db.execSync(`
     CREATE TABLE IF NOT EXISTS categories (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
-      type TEXT CHECK(type IN ('income','expense')) NOT NULL
+      type TEXT CHECK(type IN ('income','expense')) NOT NULL,
+      parent_code TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
   `);
 

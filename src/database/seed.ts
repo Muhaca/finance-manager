@@ -1,3 +1,4 @@
+import { categoriesExpense, categoriesIncome } from "../constants/categories";
 import { db } from "./db";
 
 export const seedCategories = () => {
@@ -13,36 +14,17 @@ export const seedCategories = () => {
 
     console.log("Seeding categories...");
 
-    // Expense
-    const expenses = [
-        "Makan",
-        "Belanja",
-        "Transport",
-        "Tagihan",
-        "Hiburan",
-        "Kesehatan",
-    ];
-
-    // Income
-    const incomes = [
-        "Gaji",
-        "Bonus",
-        "Freelance",
-        "Gift",
-        "Investasi",
-    ];
-
-    expenses.forEach((name) => {
+    categoriesExpense.forEach((category) => {
         db.runSync(
-            `INSERT INTO categories (name, type) VALUES (?, 'expense')`,
-            [name]
+            `INSERT INTO categories (id, name, type, parent_code) VALUES (?, ?, 'expense', ?)`,
+            [category.id, category.name, category.parent_code]
         );
     });
 
-    incomes.forEach((name) => {
+    categoriesIncome.forEach((category) => {
         db.runSync(
-            `INSERT INTO categories (name, type) VALUES (?, 'income')`,
-            [name]
+            `INSERT INTO categories (id, name, type, parent_code) VALUES (?, ?, 'income', ?)`,
+            [category.id, category.name, category.parent_code]
         );
     });
 };

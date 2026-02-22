@@ -65,12 +65,12 @@ export default function DashboardScreen() {
       {/* Balance Card */}
       <View className="bg-[#C00B70] rounded-2xl p-6 mb-6 shadow-lg">
         <View className='flex-row justify-between items-center'>
-          <Text className="text-white text-sm">
+          <Text className="text-[#F7EDF5] text-sm">
             Total Saldo
           </Text>
           <Ionicons name="wallet-outline" size={18} color="white" />
         </View>
-        <Text className="text-white text-3xl font-bold mt-1">
+        <Text className="text-[#F7EDF5] text-3xl font-bold mt-1">
           {formattedRupiah(summaryBalance + totalBalance)}
         </Text>
       </View>
@@ -78,27 +78,27 @@ export default function DashboardScreen() {
       {/* Income / Expense */}
       <View className="flex-row gap-3 mb-6">
         {/* Income */}
-        <View className="flex-1 bg-green-50 rounded-2xl p-4 shadow-sm border border-gray-100">
+        <View className="flex-1 bg-[#E9FBF1] rounded-2xl p-4 shadow-sm border border-gray-100">
           <View className='flex-row gap-2 items-center'>
-            <Ionicons name="trending-up-outline" size={18} color="green" />
-            <Text className="text-xs text-green-600">
+            <Ionicons name="trending-up-outline" size={18} color="#1FAD5A" />
+            <Text className="text-xs text-[#1FAD5A]">
               Pemasukan
             </Text>
           </View>
-          <Text className="text-green-600 font-bold text-lg mt-1">
+          <Text className="text-[#1FAD5A] font-bold text-lg mt-1">
             {formattedRupiah(summary.total_income || 0)}
           </Text>
         </View>
 
         {/* Expense */}
-        <View className="flex-1 bg-red-50 rounded-2xl p-4 shadow-sm border border-gray-100">
+        <View className="flex-1 bg-[#FCE9EE] rounded-2xl p-4 shadow-sm border border-gray-100">
           <View className='flex-row gap-2 items-center'>
-            <Ionicons name="trending-down-outline" size={18} color="red" />
-            <Text className="text-xs text-red-600">
+            <Ionicons name="trending-down-outline" size={18} color="#E74B7A" />
+            <Text className="text-xs text-[#E74B7A]">
               Pengeluaran
             </Text>
           </View>
-          <Text className="text-red-500 font-bold text-lg mt-1">
+          <Text className="text-[#E74B7A] font-bold text-lg mt-1">
             {formattedRupiah(summary.total_expense || 0)}
           </Text>
         </View>

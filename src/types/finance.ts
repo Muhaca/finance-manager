@@ -21,9 +21,10 @@ export type UpdateAccountPayload = {
 export type CategoryType = "income" | "expense";
 
 export type Category = {
-    id: number;
+    id: string;
     name: string;
     type: CategoryType;
+    parent_code: string;
 };
 
 export type CreateCategoryPayload = {
@@ -43,7 +44,7 @@ export type TransactionType = "income" | "expense";
 export type TransactionEntity = {
     id: string;
     account_id: number;
-    category_id: number;
+    category_id: string;
     amount: number;
     type: TransactionType;
     note?: string;

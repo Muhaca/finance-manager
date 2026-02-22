@@ -1,0 +1,42 @@
+
+export const categoriesExpense = [
+    { id: "cat_exp_belanja", name: "Belanja", parent_code: "cat_exp" },
+    { id: "cat_exp_belanja_sayuran", name: "Sayuran", parent_code: "cat_exp_belanja" },
+    { id: "cat_exp_belanja_bahan_pokok", name: "Bahan Pokok", parent_code: "cat_exp_belanja" },
+    { id: "cat_exp_belanja_bulanan", name: "Belanja Bulanan", parent_code: "cat_exp_belanja" },
+    { id: "cat_exp_belanja_online_shop", name: "Online Shop", parent_code: "cat_exp_belanja" },
+    { id: "cat_exp_makan", name: "Makan", parent_code: "cat_exp" },
+    { id: "cat_exp_makan_di_luar", name: "Makan di luar", parent_code: "cat_exp_makan" },
+    { id: "cat_exp_makan_delivery", name: "Delivery", parent_code: "cat_exp_makan" },
+    { id: "cat_exp_makan_jajan", name: "Jajan", parent_code: "cat_exp_makan" },
+    { id: "cat_exp_makan_minuman", name: "Minuman", parent_code: "cat_exp_makan" },
+    { id: "cat_exp_transport", name: "Transport", parent_code: "cat_exp" },
+    { id: "cat_exp_transport_bensin", name: "Bensin", parent_code: "cat_exp_transport" },
+    { id: "cat_exp_transport_parkir", name: "Parkir", parent_code: "cat_exp_transport" },
+    { id: "cat_exp_transport_servis", name: "Servis", parent_code: "cat_exp_transport" },
+    { id: "cat_exp_tagihan", name: "Tagihan", parent_code: "cat_exp" },
+    { id: "cat_exp_tagihan_listrik", name: "Listrik", parent_code: "cat_exp_tagihan" },
+    { id: "cat_exp_tagihan_air", name: "Air", parent_code: "cat_exp_tagihan" },
+    { id: "cat_exp_tagihan_internet", name: "Internet", parent_code: "cat_exp_tagihan" },
+    { id: "cat_exp_hiburan", name: "Hiburan", parent_code: "cat_exp" },
+    { id: "cat_exp_hiburan_nonton", name: "Nonton", parent_code: "cat_exp_hiburan" },
+    { id: "cat_exp_hiburan_game", name: "Game", parent_code: "cat_exp_hiburan" },
+    { id: "cat_exp_hiburan_liburan", name: "Liburan", parent_code: "cat_exp_hiburan" },
+    { id: "cat_exp_kesehatan", name: "Kesehatan", parent_code: "cat_exp" },
+    { id: "cat_exp_kesehatan_obat", name: "Obat", parent_code: "cat_exp_kesehatan" },
+    { id: "cat_exp_kesehatan_dokter", name: "Dokter", parent_code: "cat_exp_kesehatan" },
+    { id: "cat_exp_kesehatan_vitamin", name: "Vitamin", parent_code: "cat_exp_kesehatan" },
+    { id: "cat_exp_pendidikan", name: "Pendidikan", parent_code: "cat_exp" },
+    { id: "cat_exp_pendidikan_spp", name: "SPP Sekolah", parent_code: "cat_exp_pendidikan" },
+    { id: "cat_exp_pendidikan_buku", name: "Buku", parent_code: "cat_exp_pendidikan" },
+    { id: "cat_exp_pendidikan_kuliah", name: "Kuliah", parent_code: "cat_exp_pendidikan" },
+    { id: "cat_exp_pendidikan_kursus", name: "Kursus", parent_code: "cat_exp_pendidikan" }
+]
+
+export const categoriesIncome = [
+    { id: "cat_inc_gaji", name: "Gaji", parent_code: "cat_inc" },
+    { id: "cat_inc_bonus", name: "Bonus", parent_code: "cat_inc" },
+    { id: "cat_inc_freelance", name: "Freelance", parent_code: "cat_inc" },
+    { id: "cat_inc_gift", name: "Gift", parent_code: "cat_inc" },
+    { id: "cat_inc_investasi", name: "Investasi", parent_code: "cat_inc" },
+]

@@ -41,7 +41,7 @@ export default function AccountScreen() {
         <View className="flex-1 bg-gray-50 px-4 pt-10 pb-20 ">
 
             {/* Balance Card */}
-            <View className="bg-[#C00B70] rounded-2xl p-6 mb-6 shadow-lg">
+            <View className="bg-[#C00B70] h-1/6 flex justify-start rounded-b-3xl p-6 mb-6 shadow-lg">
                 <View className='flex-row justify-between items-center'>
                     <Text className="text-white text-sm">
                         Total Saldo
