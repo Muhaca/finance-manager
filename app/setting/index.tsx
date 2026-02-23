@@ -3,6 +3,7 @@ import { ImportService } from '@/src/database/data-transfer/buckup.import';
 import { db } from '@/src/database/db';
 import { transactionRepo } from '@/src/database/repositories/transactionRepo';
 import * as DocumentPicker from 'expo-document-picker';
+import * as Sharing from "expo-sharing";
 import { Pressable, Text, View } from 'react-native';
 
 export default function DataBackupScreen() {
@@ -11,8 +12,7 @@ export default function DataBackupScreen() {
         const transactions = transactionRepo.getAll();
 
         const file = await BackupService.exportToFile(transactions);
-
-        alert(`Backup saved to: ${file.uri}`);
+        await Sharing.shareAsync(file.uri);
     };
 
     const handleImport = async () => {
