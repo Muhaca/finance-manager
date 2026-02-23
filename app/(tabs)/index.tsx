@@ -1,5 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -55,7 +55,7 @@ export default function DashboardScreen() {
           <TouchableOpacity className="bg-white rounded-full p-2">
             <Ionicons name="notifications-outline" size={20} color="#000" />
           </TouchableOpacity>
-          <TouchableOpacity className="bg-white rounded-full p-2">
+          <TouchableOpacity onPress={() => router.push("/setting")} className="bg-white rounded-full p-2">
             <Ionicons name="settings-outline" size={20} color="#000" />
           </TouchableOpacity>
         </View>
