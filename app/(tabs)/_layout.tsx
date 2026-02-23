@@ -23,6 +23,11 @@ export default function TabLayout() {
           fontSize: 12,
           fontWeight: "bold",
         },
+        tabBarActiveTintColor: "#C00B70",
+        tabBarInactiveTintColor: "#999",
+        tabBarIndicatorStyle: {
+          backgroundColor: "#C00B70",
+        },
       }}
       tabBarPosition="bottom"
 

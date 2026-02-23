@@ -80,7 +80,7 @@ export default function TransactionsTab() {
             {/* ===================== */}
             {/* BALANCE HEADER */}
             {/* ===================== */}
-            <View className="bg-[#C00B70] h-1/6 flex justify-start rounded-b-3xl p-6 mb-6 shadow-lg">
+            <View className="bg-[#C00B70] h-[120px] flex justify-start rounded-b-3xl p-6 mb-6 shadow-lg">
                 < View className="flex-row justify-between items-center">
                     <Text className="text-white text-sm">
                         {filter === "income" ? "Total Pemasukan" : filter === "expense" ? "Total Pengeluaran" : "Total"}

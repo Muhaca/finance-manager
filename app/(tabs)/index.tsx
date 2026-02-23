@@ -18,7 +18,6 @@ export default function DashboardScreen() {
     const rec = transactionRepo.getRecent(5);
     const acc = accountRepo.getAll();
 
-
     setAccounts(acc || []);
     setSummary(sum || {});
     setRecent(rec || []);
@@ -78,7 +77,7 @@ export default function DashboardScreen() {
       {/* Income / Expense */}
       <View className="flex-row gap-3 mb-6">
         {/* Income */}
-        <View className="flex-1 bg-[#E9FBF1] rounded-2xl p-4 shadow-sm border border-gray-100">
+        <View className="flex-1 bg-[#E9FBF1] rounded-2xl p-4 shadow-sm border border-[#E9FBF1]">
           <View className='flex-row gap-2 items-center'>
             <Ionicons name="trending-up-outline" size={18} color="#1FAD5A" />
             <Text className="text-xs text-[#1FAD5A]">
@@ -91,7 +90,7 @@ export default function DashboardScreen() {
         </View>
 
         {/* Expense */}
-        <View className="flex-1 bg-[#FCE9EE] rounded-2xl p-4 shadow-sm border border-gray-100">
+        <View className="flex-1 bg-[#FCE9EE] rounded-2xl p-4 shadow-sm border border-[#FCE9EE]">
           <View className='flex-row gap-2 items-center'>
             <Ionicons name="trending-down-outline" size={18} color="#E74B7A" />
             <Text className="text-xs text-[#E74B7A]">

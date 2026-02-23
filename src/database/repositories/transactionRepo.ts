@@ -236,6 +236,27 @@ export const transactionRepo = {
   `);
   },
 
+  getDailySummary(year: number, month: number) {
+    const formattedMonth = month.toString().padStart(2, "0");
+
+    return db.getAllSync<any>(
+      `
+    SELECT
+      strftime('%d', datetime(date)) as day,
+
+      SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as income,
+      SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense
+
+    FROM transactions
+    WHERE strftime('%Y', datetime(date)) = ?
+      AND strftime('%m', datetime(date)) = ?
+    GROUP BY day
+    ORDER BY day
+    `,
+      [year.toString(), formattedMonth]
+    );
+  },
+
   getMonthlySummary(year: number) {
     return db.getAllSync<any>(`
     SELECT
