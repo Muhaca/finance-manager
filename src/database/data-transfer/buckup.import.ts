@@ -61,6 +61,16 @@ export class ImportService {
     const backup = await this.readBackupFile<any[]>(fileUri);
 
     const transactions = backup.data;
+    const uniqueAccounts: any[] = [];
+
+    transactions.forEach(item => {
+      if (!uniqueAccounts.includes(item.account_id)) {
+        uniqueAccounts.push({
+          id: item.account_id,
+          name: item.account_name
+        });
+      }
+    });
 
     if (!Array.isArray(transactions)) {
       throw new Error("Backup data format invalid");
@@ -73,11 +83,17 @@ export class ImportService {
       // Optional: clear old data
       db.execSync("DELETE FROM transactions");
 
+      for (const acc of uniqueAccounts) {
+        db.runSync(`INSERT INTO accounts (id, name, balance) VALUES (?, ?, 0)`,
+          [acc.id, acc.name]
+        )
+      }
+
       for (const trx of transactions) {
         db.runSync(
-          `INSERT INTO transactions (amount, type, date)
-           VALUES (?, ?, ?)`,
-          [trx.amount, trx.type, trx.date]
+          `INSERT INTO transactions (id, account_id, category_id, amount, type, note, date, created_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          [trx.id, trx.account_id, trx.category_id, trx.amount, trx.type, trx.note, trx.date, trx.created_at]
         );
       }
 

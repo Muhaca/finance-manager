@@ -4,7 +4,7 @@ export const initDB = () => {
   // Accounts
   db.execSync(`
     CREATE TABLE IF NOT EXISTS accounts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
       balance REAL DEFAULT 0,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP

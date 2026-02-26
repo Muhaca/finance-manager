@@ -1,7 +1,6 @@
 import {
     Account,
-    CreateAccountPayload,
-    UpdateAccountPayload,
+    AccountPayload
 } from "@/src/types/finance";
 import { db } from "../db";
 
@@ -15,7 +14,7 @@ export const accountRepo = {
     },
 
     // 📥 Get account by ID
-    getById(id: number): Account | null {
+    getById(id: string): Account | null {
         const row = db.getFirstSync<Account>(
             `SELECT * FROM accounts WHERE id = ?`,
             [id]
@@ -24,15 +23,15 @@ export const accountRepo = {
     },
 
     // ➕ Create account
-    create(payload: CreateAccountPayload) {
+    create(payload: AccountPayload) {
         db.runSync(
-            `INSERT INTO accounts (name, balance) VALUES (?, ?)`,
-            [payload.name, payload.balance ?? 0]
+            `INSERT INTO accounts (id, name, balance) VALUES (?, ?, ?)`,
+            [payload.id, payload.name, payload.balance ?? 0]
         );
     },
 
     // ✏️ Update account
-    update(payload: UpdateAccountPayload) {
+    update(payload: AccountPayload) {
         const fields: string[] = [];
         const values: any[] = [];
 
@@ -62,7 +61,7 @@ export const accountRepo = {
     },
 
     // ✏️ Update balance
-    updateBalance(accountId: number, delta: number) {
+    updateBalance(accountId: string, delta: number) {
         db.runSync(
             `UPDATE accounts
      SET balance = balance + ?

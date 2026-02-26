@@ -33,7 +33,7 @@ export default function AccountScreen() {
         router.push("/account/form");
     };
 
-    const goToEdit = (id: number) => {
+    const goToEdit = (id: string) => {
         router.push(`/account/form?id=${id}`);
     };
 

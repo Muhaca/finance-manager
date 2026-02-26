@@ -1,19 +1,14 @@
 //Account
 export type Account = {
-    id: number;
+    id: string;
     name: string;
     balance: number;
     created_at: string;
 };
 
-export type CreateAccountPayload = {
+export type AccountPayload = {
+    id: string;
     name: string;
-    balance?: number;
-};
-
-export type UpdateAccountPayload = {
-    id: number;
-    name?: string;
     balance?: number;
 };
 
@@ -43,7 +38,7 @@ export type TransactionType = "income" | "expense";
 
 export type TransactionEntity = {
     id: string;
-    account_id: number;
+    account_id: string;
     category_id: string;
     amount: number;
     type: TransactionType;

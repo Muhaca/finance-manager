@@ -3,13 +3,13 @@ import { ImportService } from '@/src/database/data-transfer/buckup.import';
 import { db } from '@/src/database/db';
 import { transactionRepo } from '@/src/database/repositories/transactionRepo';
 import * as DocumentPicker from 'expo-document-picker';
+import { Stack } from 'expo-router';
 import * as Sharing from "expo-sharing";
-import { Pressable, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, Text, View } from 'react-native';
 
 export default function DataBackupScreen() {
-
     const handleExport = async () => {
-        const transactions = transactionRepo.getAll();
+        const transactions = transactionRepo.getBackup();
 
         const file = await BackupService.exportToFile(transactions);
         await Sharing.shareAsync(file.uri);
@@ -33,64 +33,58 @@ export default function DataBackupScreen() {
     };
 
     return (
-        <View className="flex-1 bg-white p-6">
-            <Text className="text-xl font-bold mb-6">
-                Data & Backup
-            </Text>
-
-            {/* Export Section */}
-            <View className="mb-8">
-                <Text className="text-base font-semibold mb-2">
-                    Export Data
-                </Text>
-
-                <Text className="text-sm text-gray-500 mb-3">
-                    Last Backup: Never
-                    {/* Last Backup: {lastBackup ? new Date(lastBackup * 1000).toLocaleString() : 'Never'} */}
-                </Text>
-
-                <Pressable
-                    onPress={handleExport}
-                    className="bg-blue-600 py-3 rounded-xl items-center"
-                >
-                    <Text className="text-white font-semibold">
-                        Export Now
+        <KeyboardAvoidingView
+            behavior={
+                Platform.OS === "ios"
+                    ? "padding"
+                    : undefined
+            }
+            className="flex-1"
+        >
+            <Stack.Screen
+                options={{
+                    title: "Setting",
+                }}
+            />
+            <View className='flex-1 bg-white'>
+                <View className="flex flex-col gap-2 p-6">
+                    <Text className="text-xl font-bold">
+                        Data & Backup
                     </Text>
-                </Pressable>
-            </View>
+                    <View className="flex flex-col gap-3">
+                        {/* Export Section */}
+                        <View className="flex flex-col gap-2">
+                            <Text className="text-base font-semibold">
+                                Export Data
+                            </Text>
+                            <Pressable
+                                onPress={handleExport}
+                                className="bg-[#F86DA0] py-3 rounded-xl items-center"
+                            >
+                                <Text className="text-white font-semibold">
+                                    Export Now
+                                </Text>
+                            </Pressable>
+                        </View>
 
-            {/* Import Section */}
-            <View className="mb-8">
-                <Text className="text-base font-semibold mb-2">
-                    Import Data
-                </Text>
+                        {/* Import Section */}
+                        <View className="flex flex-col gap-2">
+                            <Text className="text-base font-semibold">
+                                Import Data
+                            </Text>
 
-                <Pressable
-                    onPress={handleImport}
-                    className="bg-red-600 py-3 rounded-xl items-center"
-                >
-                    <Text className="text-white font-semibold">
-                        Import Backup
-                    </Text>
-                </Pressable>
-            </View>
-
-            {/* Auto Backup Section */}
-            <View className="flex-row justify-between items-center">
-                <View>
-                    <Text className="text-base font-semibold">
-                        Auto Monthly Backup
-                    </Text>
-                    <Text className="text-sm text-gray-500">
-                        Automatically backup every month
-                    </Text>
+                            <Pressable
+                                onPress={handleImport}
+                                className="bg-[#C00B70] py-3 rounded-xl items-center"
+                            >
+                                <Text className="text-white font-semibold">
+                                    Import Backup
+                                </Text>
+                            </Pressable>
+                        </View>
+                    </View>
                 </View>
-
-                {/* <Switch
-                    value={autoEnabled}
-                    onValueChange={toggleAutoBackup}
-                /> */}
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 }

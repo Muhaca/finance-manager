@@ -1,6 +1,7 @@
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, View } from "react-native";
+import uuid from 'react-native-uuid';
 
 import { accountRepo } from "@/src/database/repositories/accountRepo";
 import { formattedRupiah } from "@/src/utils/currency";
@@ -17,7 +18,7 @@ export default function AccountFormScreen() {
     // Load detail kalau edit
     useEffect(() => {
         if (id) {
-            const data = accountRepo.getById(Number(id));
+            const data = accountRepo.getById(id);
             if (data) {
                 setName(data.name);
                 setBalance(data.balance)
@@ -31,17 +32,16 @@ export default function AccountFormScreen() {
             return;
         }
 
+        const payload = {
+            id: id ? id : uuid.v4(),
+            name: name,
+            balance: Number(balance),
+        }
+
         if (isEdit) {
-            accountRepo.update({
-                id: Number(id),
-                name,
-                balance: Number(balance),
-            });
+            accountRepo.update(payload);
         } else {
-            accountRepo.create({
-                name,
-                balance: Number(balance),
-            });
+            accountRepo.create(payload);
         }
 
         router.back();

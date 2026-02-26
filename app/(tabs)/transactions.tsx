@@ -138,6 +138,7 @@ export default function TransactionsTab() {
                 ListEmptyComponent={<EmptyState />}
                 renderItem={({ item }) => (
                     <TransactionItem
+                        key={item.id}
                         id={item.id}
                         title={item.note}
                         amount={item.amount}

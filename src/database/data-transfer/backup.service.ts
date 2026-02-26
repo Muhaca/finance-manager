@@ -48,4 +48,15 @@ export class BackupService {
 
         await file.delete();
     }
+
+    static async getLastBackupDate() {
+        const file = new FileSystem.File(
+            FileSystem.Paths.document,
+            "finance-backup.json"
+        );
+
+        if (!file.exists) return null;
+
+        return file.modificationTime ?? null;
+    }
 }

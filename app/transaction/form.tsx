@@ -50,7 +50,7 @@ export default function TransactionFormScreen() {
     const [modalVisible, setModalVisible] = useState(false);
 
     const [accountId, setAccountId] =
-        useState<number>();
+        useState<string>();
 
     const [showDate, setShowDate] = useState(false);
 
@@ -205,7 +205,7 @@ export default function TransactionFormScreen() {
                             onChangeText={handleChangeAmount}
                             keyboardType="numeric"
                             placeholder="Rp 0"
-                            className="border border-gray-300 rounded-xl p-3"
+                            className="border border-gray-300 rounded-xl p-3 h-16 text-xl font-medium"
                         />
                     </View>
 

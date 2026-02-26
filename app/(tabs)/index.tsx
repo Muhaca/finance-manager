@@ -18,6 +18,9 @@ export default function DashboardScreen() {
     const rec = transactionRepo.getRecent(5);
     const acc = accountRepo.getAll();
 
+    console.log(rec);
+
+
     setAccounts(acc || []);
     setSummary(sum || {});
     setRecent(rec || []);
