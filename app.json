@@ -39,8 +39,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "d5df54c5-17c1-41de-8852-061d245efafc"
+        "projectId": "da589aec-edb4-42fa-ba23-3ad6c389a52a"
       }
-    }
+    },
+    "owner": "muhaca"
   }
 }
