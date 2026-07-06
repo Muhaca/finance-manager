@@ -1,6 +1,7 @@
-import CustomTabBar from "@/src/components/CustomTabBar";
+import { Ionicons } from "@expo/vector-icons";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { withLayoutContext } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { Navigator } = createMaterialTopTabNavigator();
 
@@ -8,19 +9,33 @@ const { Navigator } = createMaterialTopTabNavigator();
 export const MaterialTopTabs = withLayoutContext(Navigator);
 
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
+
   return (
     <MaterialTopTabs
       screenOptions={{
         swipeEnabled: true,
-        tabBarStyle: { display: "none" },
-        tabBarIndicatorStyle: { display: "none" },
+        tabBarStyle: {
+          paddingBottom: insets.bottom,
+          height: 60 + insets.bottom,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "bold",
+        },
+        tabBarActiveTintColor: "#C00B70",
+        tabBarInactiveTintColor: "#999",
+        tabBarIndicatorStyle: {
+          backgroundColor: "#C00B70",
+        },
       }}
-      tabBar={(props) => <CustomTabBar {...props} />}
+      tabBarPosition="bottom"
+
     >
-      <MaterialTopTabs.Screen name="index" />
-      <MaterialTopTabs.Screen name="transactions" />
-      <MaterialTopTabs.Screen name="reports" />
-      <MaterialTopTabs.Screen name="accounts" />
+      <MaterialTopTabs.Screen name="index" options={{ title: "Home", tabBarIcon: ({ color, size }: any) => (<Ionicons name="home-outline" size={size} color={color} />) }} />
+      <MaterialTopTabs.Screen name="transactions" options={{ title: "Transaksi", tabBarIcon: ({ color, size }: any) => (<Ionicons name="receipt-outline" size={size} color={color} />) }} />
+      <MaterialTopTabs.Screen name="reports" options={{ title: "Laporan", tabBarIcon: ({ color, size }: any) => (<Ionicons name="pie-chart-outline" size={size} color={color} />) }} />
+      <MaterialTopTabs.Screen name="accounts" options={{ title: "Akun", tabBarIcon: ({ color, size }: any) => (<Ionicons name="wallet-outline" size={size} color={color} />) }} />
     </MaterialTopTabs>
   );
 }

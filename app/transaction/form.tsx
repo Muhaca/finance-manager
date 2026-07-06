@@ -6,12 +6,13 @@ import { useEffect, useState } from "react";
 import {
     Alert,
     KeyboardAvoidingView,
+    Modal,
     Platform,
     Pressable,
     ScrollView,
     Text,
     TextInput,
-    View
+    View,
 } from "react-native";
 
 import { accountRepo } from "@/src/database/repositories/accountRepo";
@@ -36,18 +37,20 @@ export default function TransactionFormScreen() {
 
     const [type, setType] =
         useState<TransactionType>("expense");
-    const [amount, setAmount] = useState("");
+    const [amount, setAmount] = useState<number>();
+    const [displayValue, setDisplayValue] = useState("");
     const [note, setNote] = useState("");
     const [date, setDate] = useState(new Date());
     const [inputHeight, setInputHeight] = useState(100);
 
     const [accounts, setAccounts] = useState<Account[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState<Category>();
+    const [selectedSubCategory, setSelectedSubCategory] = useState<Category>();
+    const [modalVisible, setModalVisible] = useState(false);
 
     const [accountId, setAccountId] =
-        useState<number>();
-    const [categoryId, setCategoryId] =
-        useState<number>();
+        useState<string>();
 
     const [showDate, setShowDate] = useState(false);
 
@@ -63,18 +66,23 @@ export default function TransactionFormScreen() {
         if (!id) return;
 
         const tx = transactionRepo.getById(String(id));
+
         if (!tx) return;
 
+        const category = categories.find((cat) => cat.id === tx.category_id)
+
         setType(tx.type);
-        setAmount(String(tx.amount));
+        setAmount(tx.amount);
+        setDisplayValue(formattedRupiah(tx.amount));
         setNote(tx.note ?? "");
         setDate(new Date(tx.date));
         setAccountId(tx.account_id);
-        setCategoryId(tx.category_id);
-    }, [id]);
+        setSelectedCategory(categories.find((cat) => cat.id === category?.parent_code));
+        setSelectedSubCategory(category);
+    }, [id, categories]);
 
     const handleSave = () => {
-        if (!accountId || !categoryId || !amount) {
+        if (!accountId || !selectedSubCategory || !amount) {
             Alert.alert("Validation", "Complete all fields");
             return;
         }
@@ -82,7 +90,7 @@ export default function TransactionFormScreen() {
         const payload: TransactionEntity = {
             id: id ? id : uuid.v4(),
             account_id: accountId,
-            category_id: categoryId,
+            category_id: selectedSubCategory?.id,
             amount: Number(amount),
             type: type,
             note: note,
@@ -99,8 +107,45 @@ export default function TransactionFormScreen() {
         router.back();
     };
 
-    return (
+    const handleDelete = () => {
+        if (!id) return;
 
+        transactionRepo.delete(id);
+        router.back();
+    };
+
+    const getSubCategories = (parentId: string) => {
+        return categories.filter(
+            (cat) => cat.parent_code === parentId
+        );
+    };
+
+    const handleChangeAmount = (text: string) => {
+        // Hapus semua karakter selain angka
+        const numeric = text.replace(/[^0-9]/g, "");
+
+        const numberValue = Number(numeric);
+
+        setAmount(numberValue);
+        setDisplayValue(formattedRupiah(numberValue));
+    };
+
+    const handleSelectCategory = (category: Category) => {
+        setSelectedCategory(category);
+        if (category.id !== selectedCategory?.id) setSelectedSubCategory(undefined);
+        if (category.type === "expense") {
+            setModalVisible(true);
+            return
+        }
+        setSelectedSubCategory(category);
+    };
+
+    const handleSelectSubCategory = (category: Category) => {
+        setSelectedSubCategory(category);
+        setModalVisible(false);
+    };
+
+    return (
         <KeyboardAvoidingView
             behavior={
                 Platform.OS === "ios"
@@ -131,6 +176,7 @@ export default function TransactionFormScreen() {
                             .map((t) => (
                                 <Pressable
                                     key={t.code}
+                                    disabled={isEdit}
                                     onPress={() => setType(t.code as TransactionType)}
                                     className={`flex-1 p-3 rounded-xl border ${type === t.code
                                         ? "bg-[#C00B70] border-[#C00B70]"
@@ -155,11 +201,11 @@ export default function TransactionFormScreen() {
                             Jumlah
                         </Text>
                         <TextInput
-                            value={amount}
-                            onChangeText={setAmount}
+                            value={displayValue}
+                            onChangeText={handleChangeAmount}
                             keyboardType="numeric"
-                            placeholder="0"
-                            className="border border-gray-300 rounded-xl p-3"
+                            placeholder="Rp 0"
+                            className="border border-gray-300 rounded-xl p-3 h-16 text-xl font-medium"
                         />
                     </View>
 
@@ -169,37 +215,93 @@ export default function TransactionFormScreen() {
                             Category
                         </Text>
                         <View className="flex-row flex-wrap -mx-2 mt-2">
-                            {categories.map((cat) => (
+                            {categories.filter((cat) => cat.parent_code === "cat_exp" || cat.parent_code === "cat_inc").map((cat) => (
                                 <View key={cat.id} className="w-1/3 px-2 mb-3">
                                     <Pressable
                                         key={cat.id}
-                                        onPress={() => setCategoryId(cat.id)}
-                                        className={`p-3 rounded-xl border ${categoryId === cat.id
+                                        onPress={() => handleSelectCategory(cat)}
+                                        className={`p-3 rounded-xl h-24 border ${selectedCategory?.id === cat.id
                                             ? "bg-[#C00B70] border-[#C00B70]"
                                             : "bg-white border-gray-300"
                                             }`}
                                     >
-                                        <View className="flex items-center gap-2">
+                                        <View className="flex items-center">
                                             <CategoryIcon
                                                 name={cat.name}
                                                 size={24}
-                                                color={categoryId === cat.id ? "white" : "black"}
+                                                color={selectedCategory?.id === cat.id ? "white" : "black"}
                                             />
                                             <Text
                                                 className={
-                                                    categoryId === cat.id
+                                                    selectedCategory?.id === cat.id
                                                         ? "text-white"
                                                         : "text-black"
                                                 }
                                             >
                                                 {cat.name}
                                             </Text>
+                                            {selectedCategory?.id === cat.id && (
+                                                <Text
+                                                    className="text-white text-xs italic"
+                                                >
+                                                    {selectedSubCategory?.name}
+                                                </Text>
+                                            )}
+
                                         </View>
                                     </Pressable>
                                 </View>
                             ))}
                         </View>
                     </View>
+
+                    {/* Modal */}
+                    <Modal
+                        visible={modalVisible}
+                        transparent
+                        animationType="slide"
+                    >
+                        <View className="flex-1 bg-black/40 justify-end">
+                            <View className="bg-white rounded-t-3xl max-h-[60%]">
+                                <View className="flex h-[60px] rounded-s-3xl items-center bg-[#C00B70] p-2">
+                                    <CategoryIcon
+                                        name={selectedCategory?.name || ""}
+                                        size={24}
+                                        color="white"
+                                    />
+                                    <Text className="text-lg font-semibold mb-4 text-white">
+                                        Pilih {selectedCategory?.name}
+                                    </Text>
+                                </View>
+
+                                {selectedCategory &&
+                                    getSubCategories(selectedCategory.id).map((sub) => (
+                                        <Pressable
+                                            key={sub.id}
+                                            onPress={() => handleSelectSubCategory(sub)}
+                                            className={` ${selectedSubCategory?.id === sub.id ? "bg-gray-200" : ""}`}
+                                        >
+                                            <View className="flex flex-row p-3 border-b border-gray-200 items-center gap-3">
+                                                <CategoryIcon
+                                                    name={sub.name}
+                                                    size={24}
+                                                    color="black"
+                                                />
+                                                <Text>{sub.name}</Text>
+                                            </View>
+                                        </Pressable>
+                                    ))}
+
+                                <Pressable
+                                    onPress={() => setModalVisible(false)}
+                                    className="mt-4 p-3 bg-gray-200"
+                                >
+                                    <Text className="text-center">Tutup</Text>
+                                </Pressable>
+
+                            </View>
+                        </View>
+                    </Modal>
 
                     {/* ACCOUNT */}
                     <View className="w-full">
@@ -301,6 +403,16 @@ export default function TransactionFormScreen() {
                                 : "Simpan Transaksi"}
                         </Text>
                     </Pressable>
+                    {isEdit && (
+                        <Pressable
+                            className="h-14 bg-[#B41847] rounded-xl p-3"
+                            onPress={handleDelete}
+                        >
+                            <Text className="text-white text-center font-bold text-lg">
+                                Hapus Transaksi
+                            </Text>
+                        </Pressable>
+                    )}
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>

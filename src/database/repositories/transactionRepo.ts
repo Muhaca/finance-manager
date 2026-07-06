@@ -6,6 +6,26 @@ import { db } from "../db";
 import { accountRepo } from "./accountRepo";
 
 export const transactionRepo = {
+  //Get All for buackup
+  getBackup(): TransactionEntity[] {
+    return db.getAllSync<TransactionEntity>(`
+      SELECT
+        t.id,
+        t.type,
+        t.amount,
+        t.date,
+        t.note,
+        t.category_id,
+        t.account_id,
+        t.created_at,
+        a.name AS account_name
+      FROM transactions t
+      LEFT JOIN accounts a
+        ON a.id = t.account_id
+      ORDER BY date DESC
+    `) as TransactionEntity[];
+  },
+
   // 📥 Get all
   getAll(): TransactionEntity[] {
     return db.getAllSync<TransactionEntity>(`
@@ -234,6 +254,27 @@ export const transactionRepo = {
     return db.getFirstSync<any>(`
     SELECT SUM(balance) as total FROM accounts
   `);
+  },
+
+  getDailySummary(year: number, month: number) {
+    const formattedMonth = month.toString().padStart(2, "0");
+
+    return db.getAllSync<any>(
+      `
+    SELECT
+      strftime('%d', datetime(date)) as day,
+
+      SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as income,
+      SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense
+
+    FROM transactions
+    WHERE strftime('%Y', datetime(date)) = ?
+      AND strftime('%m', datetime(date)) = ?
+    GROUP BY day
+    ORDER BY day
+    `,
+      [year.toString(), formattedMonth]
+    );
   },
 
   getMonthlySummary(year: number) {

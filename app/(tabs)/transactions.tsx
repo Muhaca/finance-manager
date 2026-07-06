@@ -13,6 +13,7 @@ import TransactionItem from "@/src/components/TransactionItem";
 import { categoryTypeList } from "@/src/constants/cetegoryTypeList";
 import { transactionRepo } from "@/src/database/repositories/transactionRepo";
 import { formattedRupiah } from "@/src/utils/currency";
+import { Ionicons } from "@expo/vector-icons";
 
 type FilterType = "all" | "income" | "expense";
 
@@ -30,8 +31,6 @@ export default function TransactionsTab() {
         const trx = transactionRepo.getAll();
         const bal = transactionRepo.getTotalBalance();
         const sum = transactionRepo.getSummaryCurrentMonth()
-
-        console.log(sum);
 
         setSummary(sum || { total_income: 0, total_expense: 0 })
         setData(trx || []);
@@ -81,13 +80,18 @@ export default function TransactionsTab() {
             {/* ===================== */}
             {/* BALANCE HEADER */}
             {/* ===================== */}
-            <View className="bg-[#C00B70] rounded-2xl p-6 mb-6 shadow-lg">
-                <View className="flex-row justify-between">
+            <View className="bg-[#C00B70] h-[120px] flex justify-start rounded-b-3xl p-6 mb-6 shadow-lg">
+                < View className="flex-row justify-between items-center">
                     <Text className="text-white text-sm">
                         {filter === "income" ? "Total Pemasukan" : filter === "expense" ? "Total Pengeluaran" : "Total"}
                     </Text>
+                    {filter === "income" ?
+                        <Ionicons name="trending-up-outline" size={20} color="white" />
+                        : filter === "expense" ?
+                            <Ionicons name="trending-down-outline" size={20} color="white" />
+                            :
+                            <Ionicons name="wallet-outline" size={20} color="white" />}
                 </View>
-
                 <Text className="text-white text-3xl font-bold mt-1">
                     {filter === "income" ? formattedRupiah(summary.total_income) : filter === "expense" ? formattedRupiah(summary.total_expense) : formattedRupiah(balance)}
                 </Text>
@@ -105,7 +109,7 @@ export default function TransactionsTab() {
                                 setFilter(f.code as FilterType)
                             }
                             className={`px-4 py-2 rounded-full border ${filter === f.code
-                                ? "bg-[#E978AC] border-[#E978AC]"
+                                ? "bg-[#F86DA0] border-[#F86DA0]"
                                 : "bg-white border-gray-200"
                                 }`}
                         >
@@ -134,6 +138,7 @@ export default function TransactionsTab() {
                 ListEmptyComponent={<EmptyState />}
                 renderItem={({ item }) => (
                     <TransactionItem
+                        key={item.id}
                         id={item.id}
                         title={item.note}
                         amount={item.amount}
@@ -162,7 +167,7 @@ export default function TransactionsTab() {
             {/* ===================== */}
             <Pressable
                 onPress={() => router.push("/transaction/form")}
-                className="absolute right-6 bg-[#8c174e] rounded-full items-center justify-center shadow-lg h-16 w-16"
+                className="absolute right-6 bg-[#C3094D] rounded-full items-center justify-center shadow-lg h-16 w-16"
                 style={{
                     bottom: 120, // 🔥 jangan terlalu dekat tab
                     zIndex: 100,
